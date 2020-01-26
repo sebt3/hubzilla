@@ -1,5 +1,6 @@
 FROM alpine:latest as build
-RUN apk add bash curl gd php7 php7-curl php7-gd php7-json php7-openssl php7-xml php7-pecl-imagick php7-pgsql php7-mysqli php7-mbstring php7-pecl-mcrypt php7-zip \
+RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repositories \
+ && apk add bash curl gd php7 php7-curl php7-gd php7-json php7-openssl php7-xml php7-pecl-imagick php7-pgsql php7-mysqli php7-mbstring php7-pecl-mcrypt php7-zip \
  && apk add git \
  && git clone https://framagit.org/hubzilla/core.git /hubzilla
 WORKDIR /hubzilla
