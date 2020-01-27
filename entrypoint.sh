@@ -129,7 +129,7 @@ ENDCONF
 				util/config ldapauth ldap_bindpw $LDAP_ADMIN_PASSWORD
 				util/config ldapauth ldap_searchdn $LDAP_BASE
 				util/config ldapauth ldap_userattr uid
-				util/config ldapauth create_account;;
+				util/config ldapauth create_account 1;;
 		esac
 	done
 	util/service_class system default_service_class firstclass

@@ -21,7 +21,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repo
  && apk --update --no-cache --no-progress add libpng imagemagick-libs libjpeg-turbo rsync ssmtp shadow mysql-client postgresql-client libmcrypt tzdata ssmtp bash git tzdata openldap-clients imagemagick \
  && apk --update --no-progress add --virtual build-deps autoconf curl-dev freetype-dev build-base  icu-dev libjpeg-turbo-dev imagemagick-dev libldap libmcrypt-dev libpng-dev libtool libxml2-dev openldap-dev postgresql-dev postgresql-libs unzip libmcrypt-dev libxml2-dev openldap-dev \
  && docker-php-ext-configure gd --with-freetype-dir=/usr --with-png-dir=/usr --with-jpeg-dir=/usr \
- && docker-php-ext-install gd json mbstring mysqli pgsql xml zip mcrypt curl json xml zip pdo pdo_mysql pdo_pgsql ldap \
+ && docker-php-ext-install gd json mbstring mysqli pgsql xml zip mcrypt curl json xml zip pdo pdo_mysql pdo_pgsql ldap opcache \
  && pecl install -o -f redis		\
  && docker-php-ext-enable redis.so	\
  && pecl install imagick                \
