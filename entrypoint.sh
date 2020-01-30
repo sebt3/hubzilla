@@ -137,6 +137,9 @@ ENDCONF
 	util/config system ignore_imagick true
 fi
 
+mkdir -p /var/www/html/xhprof
+chown www-data:www-data /var/www/html/xhprof
+
 fi
 echo "Starting $@"
 exec "$@"
