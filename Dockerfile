@@ -6,9 +6,11 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repo
 WORKDIR /hubzilla
 COPY .tags /tmp/
 COPY entrypoint.sh /hubzilla
+COPY hubzilla4.6.patch /tmp/
 RUN sed 's/,.*//' /tmp/.tags >/hubzilla/version \
  && chmod +x /hubzilla/entrypoint.sh \
  && git checkout tags/$(cat /hubzilla/version) \
+ && patch -p1 < /tmp/hubzilla4.6.patch \
  && rm -rf .git \
  && mkdir -p "store/[data]/smarty3" \
  && util/add_widget_repo https://framagit.org/hubzilla/widgets.git hubzilla-widgets \
