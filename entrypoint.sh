@@ -80,11 +80,11 @@ db() {  PGPASSWORD="${DB_PASSWORD:="hubzilla"}" psql -h "${DB_HOST:="postgres"}"
 		cat >.htconfig.php <<ENDCONF
 <?php
 \$db_host = '${DB_HOST}';
-\$db_port =  ${DB_PORT};
+\$db_port = '${DB_PORT}';
 \$db_user = '${DB_USER}';
 \$db_pass = '${DB_PASSWORD}';
 \$db_data = '${DB_NAME}';
-\$db_type =  ${DB_TYPE};
+\$db_type = '${DB_TYPE}';
 
 // The following configuration maybe configured later in the Admin interface
 // They can also be set by 'util/pconfig'
