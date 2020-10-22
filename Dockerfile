@@ -6,14 +6,17 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repo
 WORKDIR /hubzilla
 COPY .tags /tmp/
 COPY entrypoint.sh /hubzilla
+COPY hubzilla4.7.2.patch /tmp/
 RUN sed 's/,.*//' /tmp/.tags >/hubzilla/version \
  && chmod +x /hubzilla/entrypoint.sh \
  && git checkout tags/$(cat /hubzilla/version) \
+ && patch -p1 < /tmp/hubzilla4.7.2.patch \
  && rm -rf .git \
  && mkdir -p "store/[data]/smarty3" \
  && util/add_widget_repo https://framagit.org/hubzilla/widgets.git hubzilla-widgets \
  && util/add_addon_repo https://codeberg.org/hubzilla/hubzilla-addons.git hzaddons \
- && util/add_addon_repo https://framagit.org/dentm42/dm42-hz-addons.git dm42
+ && util/add_addon_repo https://framagit.org/dentm42/dm42-hz-addons.git dm42 \
+ && util/add_addon_repo https://codeberg.org/voryzen/hzaddons.git voryzen
 
 FROM php:7.4-fpm-alpine
 COPY --from=build /hubzilla /hubzilla
