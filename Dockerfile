@@ -2,21 +2,18 @@ FROM alpine:latest as build
 RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repositories \
  && apk add bash curl gd php7 php7-curl php7-gd php7-json php7-openssl php7-xml php7-pecl-imagick php7-pgsql php7-mysqli php7-mbstring php7-pecl-mcrypt php7-zip \
  && apk add git patch \
- && git clone https://codeberg.org/hubzilla/hubzilla.git /hubzilla
+ && git clone https://framagit.org/hubzilla/core.git /hubzilla
 WORKDIR /hubzilla
 COPY .tags /tmp/
 COPY entrypoint.sh /hubzilla
-COPY hubzilla4.7.2.patch /tmp/
 RUN sed 's/,.*//' /tmp/.tags >/hubzilla/version \
  && chmod +x /hubzilla/entrypoint.sh \
  && git checkout tags/$(cat /hubzilla/version) \
- && patch -p1 < /tmp/hubzilla4.7.2.patch \
  && rm -rf .git \
  && mkdir -p "store/[data]/smarty3" \
  && util/add_widget_repo https://framagit.org/hubzilla/widgets.git hubzilla-widgets \
- && util/add_addon_repo https://codeberg.org/hubzilla/hubzilla-addons.git hzaddons \
- && util/add_addon_repo https://framagit.org/dentm42/dm42-hz-addons.git dm42 \
- && util/add_addon_repo https://codeberg.org/voryzen/hzaddons.git voryzen
+ && util/add_addon_repo https://framagit.org/hubzilla/addons.git hzaddons \
+ && util/add_addon_repo https://framagit.org/dentm42/dm42-hz-addons.git dm42
 
 FROM php:7.4-fpm-alpine
 COPY --from=build /hubzilla /hubzilla

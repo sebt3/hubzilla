@@ -1,11 +1,15 @@
 #!/bin/sh
 
+CURVER="5"
+[ -f /var/www/html/version ] && CURVER=$(cat /var/www/html/version|sed 's/\..*//')
 if ! [ -f /var/www/html/version ] || ! diff /hubzilla/version /var/www/html/version;then
 	cp -Rapf /hubzilla/* /hubzilla/.htaccess /var/www/html/
 	FORCE_CONFIG=1
 fi
 
 if [ "${1:-"failed"}" != "crond" ];then # Do no configuration for crond
+
+
 
 # Check for database
 CNT=0
@@ -123,7 +127,7 @@ ENDCONF
 		# even if jappixmini doesnt seems to work... at least if enabled it will be legal easily :P
 		jappixmini)	curl -sL https://framagit.org/hubzilla/addons/raw/cf4c65b4c61804fb586e8ac4b3a3af085bd0396f/jappixmini.tgz >addon/jappixmini.tgz
 				util/config jappixmini bosh_address "https://$HUBZILLA_DOMAIN/http-bind";;
-		xmpp)		util/config xmpp bosh_proxy "https://$HUBZILLA_DOMAIN/http-bind";;
+		#xmpp)		util/config xmpp bosh_proxy "https://$HUBZILLA_DOMAIN/http-bind";;
 		ldapauth)	util/config ldapauth ldap_server ldap://$LDAP_SERVER
 				util/config ldapauth ldap_binddn $LDAP_ROOT_DN
 				util/config ldapauth ldap_bindpw $LDAP_ADMIN_PASSWORD
@@ -135,6 +139,31 @@ ENDCONF
 	util/service_class system default_service_class firstclass
 	util/config system disable_email_validation 1
 	util/config system ignore_imagick true
+fi
+
+if [ ${CURVER:-'5'} == "4" ];then
+
+	echo "======== Running udall ========"
+if [ -d extend ] ; then
+        for a in  theme addon widget ; do
+                if [ -d extend/$a ]; then
+                        for b in  `ls extend/$a` ; do
+                                echo Updating $b
+                                'util/update_'$a'_repo' $b
+                        done
+                fi
+        done
+fi
+	echo "======== udall SUCCESS ========"
+	echo "======== Running z6convert ========"
+	echo "This Will take a while..."
+	php util/z6convert.php
+	R=$?
+	if [ $R -ne 0 ];then
+		echo "======== FAILED z6convert ========"
+	else
+		echo "======== z6convert SUCCESS ========"
+	fi
 fi
 
 mkdir -p /var/www/html/xhprof
