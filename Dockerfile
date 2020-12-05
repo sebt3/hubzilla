@@ -4,10 +4,11 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repo
  && apk add git patch \
  && git clone https://framagit.org/hubzilla/core.git /hubzilla
 WORKDIR /hubzilla
-COPY .tags /tmp/
 COPY entrypoint.sh /hubzilla
+COPY .tags /tmp/
 RUN sed 's/,.*//' /tmp/.tags >/hubzilla/version \
  && chmod +x /hubzilla/entrypoint.sh \
+ && git pull \
  && git checkout tags/$(cat /hubzilla/version) \
  && rm -rf .git \
  && mkdir -p "store/[data]/smarty3" \
@@ -16,7 +17,6 @@ RUN sed 's/,.*//' /tmp/.tags >/hubzilla/version \
  && util/add_addon_repo https://framagit.org/dentm42/dm42-hz-addons.git dm42
 
 FROM php:7.4-fpm-alpine
-COPY --from=build /hubzilla /hubzilla
 RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repositories \
  && apk --update --no-cache --no-progress add libpng imagemagick-libs libjpeg-turbo rsync ssmtp shadow mysql-client postgresql-client libmcrypt tzdata ssmtp bash git tzdata openldap-clients imagemagick oniguruma libzip \
  && apk --update --no-progress add --virtual build-deps autoconf curl-dev freetype-dev build-base  icu-dev libjpeg-turbo-dev imagemagick-dev libldap libmcrypt-dev libpng-dev libtool libxml2-dev openldap-dev postgresql-dev postgresql-libs unzip libmcrypt-dev libxml2-dev openldap-dev oniguruma-dev libzip-dev \
@@ -36,6 +36,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repo
  && chmod 755 /etc/periodic/15min/hubzilla \
  && apk --purge del build-deps		\
  && rm -rf /tmp/* /var/cache/apk/*gz
+COPY --from=build /hubzilla /hubzilla
 
 ENTRYPOINT [ "/hubzilla/entrypoint.sh" ]
 CMD ["php-fpm"]
