@@ -20,6 +20,13 @@ jobs:
     - name: Get major version
       id: major
       run: echo "::set-output name=major::$(awk -F, '{print $2}' .tags)"
+    - name: Get GITHUB_ACTOR
+      id: actor
+      run: echo "::set-output name=actor::${GITHUB_ACTOR}"
+    - name: Get GITHUB_REPOSITORY
+      id: repo
+      run: echo "::set-output name=repo::${GITHUB_REPOSITORY}"
+
 
     - name: Docker Setup Buildx
       uses: docker/setup-buildx-action@v1
@@ -37,7 +44,7 @@ jobs:
         platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
         push: true
         tags: |
-          ${{ GITHUB_ACTOR }}/${{ GITHUB_REPOSITORY }}:latest
-          ${{ GITHUB_ACTOR }}/${{ GITHUB_REPOSITORY }}:${{ steps.full.outputs.full }}
-          ${{ GITHUB_ACTOR }}/${{ GITHUB_REPOSITORY }}:${{ steps.major.outputs.major }}
+          ${{ steps.actor.outputs.actor }}/${{ steps.repo.outputs.repo }}:latest
+          ${{ steps.actor.outputs.actor }}/${{ steps.repo.outputs.repo }}:${{ steps.full.outputs.full }}
+          ${{ steps.actor.outputs.actor }}/${{ steps.repo.outputs.repo }}:${{ steps.major.outputs.major }}
           
