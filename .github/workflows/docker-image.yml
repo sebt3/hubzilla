@@ -33,7 +33,7 @@ jobs:
     - name: Docker Login
       uses: docker/login-action@v1.6.0
       with:
-        username: ${{ GITHUB_ACTOR }}
+        username: ${{ steps.actor.outputs.actor }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build the Docker image
