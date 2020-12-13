@@ -18,7 +18,6 @@ jobs:
       run: |
         echo "::set-output name=major::$(awk -F, '{print $2}' .tags)"
         echo "::set-output name=full::$(awk -F, '{print $1}' .tags)"
-        echo "Will build for: $repository_owner/$repository:latest"
 
     - name: Docker Setup qemu-action
       uses: docker/setup-qemu-action@v1
@@ -38,7 +37,7 @@ jobs:
         platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
         push: true
         tags: |
-          ${{ github.repository_owner }}/${{ github.repository }}:latest
-          ${{ github.repository_owner }}/${{ github.repository }}:${{ steps.version.outputs.full }}
-          ${{ github.repository_owner }}/${{ github.repository }}:${{ steps.version.outputs.major }}
+          ${{ github.repository }}:latest
+          ${{ github.repository }}:${{ steps.version.outputs.full }}
+          ${{ github.repository }}:${{ steps.version.outputs.major }}
           
