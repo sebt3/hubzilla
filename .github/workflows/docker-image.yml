@@ -16,9 +16,9 @@ jobs:
         repository_owner: ${{ github.repository_owner }}
         repository: ${{ github.repository }}
       run: |
-        echo "::set-output name=major::$(awk -F, '{print $2}' .tags)";
-        echo "::set-output name=full::$(awk -F, '{print $1}' .tags)";
-	echo "Will build for: $repository_owner/$repository:latest";
+        echo "::set-output name=major::$(awk -F, '{print $2}' .tags)"
+        echo "::set-output name=full::$(awk -F, '{print $1}' .tags)"
+        echo "Will build for: $repository_owner/$repository:latest"
 
     - name: Docker Setup qemu-action
       uses: docker/setup-qemu-action@v1
