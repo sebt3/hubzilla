@@ -10,11 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Get major version
+    - name: Get versions
       id: version
-      env:
-        repository_owner: ${{ github.repository_owner }}
-        repository: ${{ github.repository }}
       run: |
         echo "::set-output name=major::$(awk -F, '{print $2}' .tags)"
         echo "::set-output name=full::$(awk -F, '{print $1}' .tags)"
