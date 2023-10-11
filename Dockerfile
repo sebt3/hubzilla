@@ -23,10 +23,10 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repo
  && apk --update --no-progress add --virtual build-deps autoconf curl-dev freetype-dev build-base  icu-dev libjpeg-turbo-dev imagemagick-dev libldap libmcrypt-dev libpng-dev libtool libxml2-dev openldap-dev postgresql-dev postgresql-libs unzip libmcrypt-dev libxml2-dev openldap-dev oniguruma-dev libzip-dev \
  && docker-php-ext-configure gd --enable-gd --with-jpeg --with-freetype \
  && docker-php-ext-install gd json mbstring mysqli pgsql xml zip curl json xml zip pdo pdo_mysql pdo_pgsql ldap opcache \
- && pecl install -o -f redis		\
- && docker-php-ext-enable redis.so	\
- && pecl install imagick                \
- && docker-php-ext-enable imagick       \
+ && pecl install -o -f redis \
+ && docker-php-ext-enable redis.so \
+ && pecl install imagick \
+ && docker-php-ext-enable imagick \
  && pecl install xhprof \
  && docker-php-ext-enable xhprof.so \
  && echo 'xhprof.output_dir = "/var/www/html/xhprof"'|tee -a /usr/local/etc/php/conf.d/docker-php-ext-xhprof.ini \
@@ -35,7 +35,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/ftp.halifax.rwth-aachen.de/g' /etc/apk/repo
  && echo -e 'upload_max_filesize = 100M\npost_max_size = 101M' > /usr/local/etc/php/conf.d/hubzilla.ini \
  && echo -e '#!/bin/sh\ncd /var/www/html\n/usr/local/bin/php /var/www/html/Zotlabs/Daemon/Master.php Cron' >/etc/periodic/15min/hubzilla \
  && chmod 755 /etc/periodic/15min/hubzilla \
- && apk --purge del build-deps		\
+ && apk --purge del build-deps \
  && rm -rf /tmp/* /var/cache/apk/*gz
 COPY --from=build /hubzilla /hubzilla
 
