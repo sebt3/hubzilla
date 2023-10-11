@@ -8,8 +8,10 @@ volumes:
   volweb:
 
 configs:
-  nginx:
-    file: nginx.conf
+  nginx_config: 
+    file: nginx/nginx.conf
+  nginx_default_config:
+    file: nginx/default.conf.template
     
 services:
   postgres:
@@ -26,10 +28,15 @@ services:
   nginx:
     image: nginx:alpine
     configs:
-      - source: nginx
+      - source: nginx_config
         target: /etc/nginx/nginx.conf
+      - source: nginx_default_config
+        target: /etc/nginx/templates/default.conf.template
     environment:
-      - SERVER_NAME=${DOMAIN}
+      NGINX_ENVSUBST_TEMPLATE_SUFFIX: .template
+      SERVER_NAME: ${DOMAIN}
+    depends_on:
+      - hubzilla
     volumes:
       - volweb:/var/www/html
     networks:
@@ -55,7 +62,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - postgres
-      - nginx
     env_file: .env
     environment:
       DB_HOST: postgres
