@@ -50,7 +50,7 @@ sql() {	db -c "$@" ; }
 		FORCE_CONFIG=1
 	fi
 	DB_TYPE=1;;
-*)	echo "***** Unknown DB_TYPE=$DB_TYPE ******"
+*)	echo "***** Unknown DB_TYPE=${DB_TYPE} ******"
 	echo "***** Skipping database check/setup ******"
 	echo "***** YOU ARE on your OWN now ******"
 	FORCE_CONFIG=0;;
@@ -92,9 +92,9 @@ db() {  PGPASSWORD="${DB_PASSWORD:="hubzilla"}" psql -h "${DB_HOST:="postgres"}"
 
 // The following configuration maybe configured later in the Admin interface
 // They can also be set by 'util/pconfig'
-App::\$config['system']['timezone'] = 'America/Los_Angeles';
+App::\$config['system']['timezone'] = '${TIMEZONE:="Etc/UTC}';
 App::\$config['system']['baseurl'] = 'https://$HUBZILLA_DOMAIN';
-App::\$config['system']['sitename'] = 'Hubzilla';
+App::\$config['system']['sitename'] = '${SITE_NAME}';
 App::\$config['system']['location_hash'] = '$(random_string)';
 App::\$config['system']['transport_security_header'] = 1;
 App::\$config['system']['content_security_policy'] = 1;
@@ -126,12 +126,12 @@ ENDCONF
 		gnusoc)		util/config system.gnusoc_allowed 1;;
 		# even if jappixmini doesnt seems to work... at least if enabled it will be legal easily :P
 		jappixmini)	curl -sL https://framagit.org/hubzilla/addons/raw/cf4c65b4c61804fb586e8ac4b3a3af085bd0396f/jappixmini.tgz >addon/jappixmini.tgz
-				util/config jappixmini bosh_address "https://$HUBZILLA_DOMAIN/http-bind";;
-		#xmpp)		util/config xmpp bosh_proxy "https://$HUBZILLA_DOMAIN/http-bind";;
-		ldapauth)	util/config ldapauth ldap_server ldap://$LDAP_SERVER
-				util/config ldapauth ldap_binddn $LDAP_ROOT_DN
-				util/config ldapauth ldap_bindpw $LDAP_ADMIN_PASSWORD
-				util/config ldapauth ldap_searchdn $LDAP_BASE
+				util/config jappixmini bosh_address "https://${HUBZILLA_DOMAIN}/http-bind";;
+		#xmpp)		util/config xmpp bosh_proxy "https://${HUBZILLA_DOMAIN}/http-bind";;
+		ldapauth)	util/config ldapauth ldap_server ldap://${LDAP_SERVER}
+				util/config ldapauth ldap_binddn ${LDAP_ROOT_DN}
+				util/config ldapauth ldap_bindpw ${LDAP_ADMIN_PASSWORD}
+				util/config ldapauth ldap_searchdn ${LDAP_BASE}
 				util/config ldapauth ldap_userattr uid
 				util/config ldapauth create_account 1;;
 		esac
