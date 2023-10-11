@@ -1,13 +1,16 @@
 version: '3.9'
+
 networks:
   hubzilla:
 
 volumes:
   voldb:
   volweb:
+
 configs:
   nginx:
     file: nginx.conf
+    
 services:
   postgres:
     image: postgres:12-alpine
@@ -19,6 +22,7 @@ services:
       - voldb:/var/lib/postgresql/data
     networks:
     - hubzilla
+
   nginx:
     image: nginx:alpine
     configs:
@@ -42,6 +46,7 @@ services:
         - traefik.http.routers.redirect.rule=Host(`${DOMAIN}`)
         - traefik.http.routers.redirect.middlewares=redirect-to-https
         - traefik.http.routers.redirect.entrypoints=web
+
   hubzilla:
     build:
       context: ../
@@ -64,6 +69,7 @@ services:
       - hubzilla
     volumes:
       - volweb:/var/www/html
+
   cron:
     build:
       context: ../
