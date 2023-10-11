@@ -28,6 +28,8 @@ services:
       - volweb:/var/www/html
     networks:
       - hubzilla
+    ports:
+      - 80:80
     deploy:
       labels:
         - traefik.enable=true
