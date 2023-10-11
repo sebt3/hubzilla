@@ -1,8 +1,7 @@
 version: '3.9'
 networks:
   hubzilla:
-  public:
-    external: true
+
 volumes:
   voldb:
   volweb:
@@ -29,7 +28,6 @@ services:
       - volweb:/var/www/html
     networks:
       - hubzilla
-      - public
     deploy:
       labels:
         - traefik.enable=true
