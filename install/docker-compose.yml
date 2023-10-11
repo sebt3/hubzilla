@@ -13,9 +13,9 @@ services:
   postgres:
     image: postgres:12-alpine
     environment:
-      POSTGRES_PASSWORD: hubzilla
-      POSTGRES_USER: hubzilla
-      POSTGRES_DB: hub
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - voldb:/var/lib/postgresql/data
     networks:
@@ -33,13 +33,13 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.hubzilla.rule=Host(`domain.com`)
+        - traefik.http.routers.hubzilla.rule=Host(`${DOMAIN}`)
         - traefik.http.routers.hubzilla.tls=true
         - traefik.http.routers.hubzilla.tls.certresolver=le
         - traefik.http.routers.hubzilla.entrypoints=websecure
         - traefik.http.services.hubzilla.loadbalancer.server.port=80
         - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-        - traefik.http.routers.redirect.rule=Host(`domain.com`)
+        - traefik.http.routers.redirect.rule=Host(`${DOMAIN}`)
         - traefik.http.routers.redirect.middlewares=redirect-to-https
         - traefik.http.routers.redirect.entrypoints=web
   hubzilla:
@@ -47,22 +47,23 @@ services:
     depends_on:
       - postgres
       - nginx
+    env_file: ../.env
     environment:
       DB_HOST: postgres
-      DB_PORT: 5432
-      DB_TYPE: pgsql
-      DB_NAME: hub
-      DB_USER: hubzilla
-      DB_PASSWORD: hubzilla
-      HUBZILLA_DOMAIN: "domain.com"
-      HUBZILLA_ADMIN: "admin@domain.com"
+      DB_PORT: ${DB_PORT}
+      DB_TYPE: ${DB_TYPE}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      HUBZILLA_DOMAIN: ${DOMAIN}
+      HUBZILLA_ADMIN: ${ADMIN_EMAIL}
       ADDON_LIST: "nsfw superblock diaspora pubcrawl openstreetmap bookmarker"
     networks:
       - hubzilla
     volumes:
       - volweb:/var/www/html
   cron:
-    image: sebt3/hubzilla:5.0
+    env_file: ../.env
     depends_on:
       - postgres
     command: ["crond", "-f"]
