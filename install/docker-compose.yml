@@ -64,12 +64,6 @@ services:
       - postgres
     env_file: .env
     environment:
-      DB_HOST: postgres
-      DB_PORT: ${DB_PORT}
-      DB_TYPE: ${DB_TYPE}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
       HUBZILLA_DOMAIN: ${DOMAIN}
       HUBZILLA_ADMIN: ${ADMIN_EMAIL}
       ADDON_LIST: ${ADDON_LIST}
