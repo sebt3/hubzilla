@@ -90,10 +90,10 @@ db() {  PGPASSWORD="${DB_PASSWORD:="hubzilla"}" psql -h "${DB_HOST:="postgres"}"
 \$db_data = '${DB_NAME}';
 \$db_type = '${DB_TYPE}';
 
-// The following configuration maybe configured later in the Admin interface
+// The following configuration may be configured later in the Admin interface
 // They can also be set by 'util/pconfig'
-App::\$config['system']['timezone'] = '${TIMEZONE:="Etc/UTC}';
-App::\$config['system']['baseurl'] = 'https://$HUBZILLA_DOMAIN';
+App::\$config['system']['timezone'] = '${TIMEZONE:="Etc/UTC"}';
+App::\$config['system']['baseurl'] = 'https://${HUBZILLA_DOMAIN}';
 App::\$config['system']['sitename'] = '${SITE_NAME}';
 App::\$config['system']['location_hash'] = '$(random_string)';
 App::\$config['system']['transport_security_header'] = 1;

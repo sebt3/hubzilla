@@ -72,8 +72,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       HUBZILLA_DOMAIN: ${DOMAIN}
       HUBZILLA_ADMIN: ${ADMIN_EMAIL}
-      TIMEZONE: ${TIMEZONE}
-      ADDON_LIST: "nsfw superblock diaspora pubcrawl openstreetmap bookmarker"
+      ADDON_LIST: ${ADDON_LIST}
     networks:
       - hubzilla
     volumes:
