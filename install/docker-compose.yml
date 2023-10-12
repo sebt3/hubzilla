@@ -2,6 +2,8 @@ version: '3.9'
 
 networks:
   hubzilla:
+  nginx_external:
+    external: true
 
 volumes:
   voldb:
@@ -14,17 +16,28 @@ configs:
     file: nginx/default.conf.template
     
 services:
-  postgres:
-    image: postgres:12-alpine
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_DB: ${DB_NAME}
+  traefik:
+    # create external network with 'docker network create NETWORKNAME'
+    image: traefik:2.10
+    restart: always
+    ports:
+      - 80:80
+      - 8080:8080
     volumes:
-      - voldb:/var/lib/postgresql/data
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
-    - hubzilla
-
+      - hubzilla
+    command:
+      - --log.level=DEBUG
+      - --log.filepath=/proc/self/fd/1
+      # - --tracing=true
+      # - --tracing.serviceName=traefik
+      - --api.insecure=true
+      - --entrypoints.web.address=:80
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=install_hubzilla
+    
   nginx:
     image: nginx:alpine
     configs:
@@ -41,20 +54,21 @@ services:
       - volweb:/var/www/html
     networks:
       - hubzilla
-    ports:
-      - 80:80
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.hubzilla.rule=Host(`${DOMAIN}`)
-        - traefik.http.routers.hubzilla.tls=true
-        - traefik.http.routers.hubzilla.tls.certresolver=le
-        - traefik.http.routers.hubzilla.entrypoints=websecure
-        - traefik.http.services.hubzilla.loadbalancer.server.port=80
-        - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-        - traefik.http.routers.redirect.rule=Host(`${DOMAIN}`)
-        - traefik.http.routers.redirect.middlewares=redirect-to-https
-        - traefik.http.routers.redirect.entrypoints=web
+    #   - nginx_external
+    labels:
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.docker.network=install_hubzilla
+      - traefik.http.routers.nginx.rule=Host(`localhost`)
+      - traefik.http.routers.nginx.entrypoints=web
+      # - traefik.http.services.nginx.loadbalancer.server.port=80
+      # - traefik.http.routers.nginx.tls=true
+      # - traefik.http.routers.nginx.tls.certresolver=le
+      # - traefik.http.routers.nginx.entrypoints=websecure
+      # - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      # - traefik.http.routers.redirect.rule=Host(`${DOMAIN}`)
+      # - traefik.http.routers.redirect.middlewares=redirect-to-https
+      # - traefik.http.routers.redirect.entrypoints=web
 
   hubzilla:
     build:
@@ -71,16 +85,31 @@ services:
       - hubzilla
     volumes:
       - volweb:/var/www/html
-
-  cron:
-    build:
-      context: ../
-      dockerfile: Dockerfile
-    env_file: .env
-    depends_on:
-      - postgres
-    command: ["crond", "-f"]
+    labels:
+      - traefik.enable=true
+      - traefik.port=80
+      - traefik.docker.network=install_hubzilla
+      - traefik.http.routers.hubzilla.rule=Path(`/{path:.*\\.(php|php8)$}`)
+      
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - voldb:/var/lib/postgresql/data
     networks:
       - hubzilla
-    volumes:
-      - volweb:/var/www/html
+  # cron:
+  #   build:
+  #     context: ../
+  #     dockerfile: Dockerfile
+  #   env_file: .env
+  #   depends_on:
+  #     - postgres
+  #   command: ["crond", "-f"]
+  #   networks:
+  #     - hubzilla
+  #   volumes:
+  #     - volweb:/var/www/html
