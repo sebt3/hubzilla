@@ -59,7 +59,7 @@ services:
       - traefik.enable=true
       - traefik.port=80
       - traefik.docker.network=install_hubzilla
-      - traefik.http.routers.nginx.rule=Host(`localhost`)
+      - traefik.http.routers.nginx.rule=Host(`${DOMAIN}`)
       - traefik.http.routers.nginx.entrypoints=web
       # - traefik.http.services.nginx.loadbalancer.server.port=80
       # - traefik.http.routers.nginx.tls=true
@@ -98,12 +98,13 @@ services:
       - voldb:/var/lib/postgresql/data
     networks:
       - hubzilla
-  # cron:
-  #   env_file: .env
-  #   depends_on:
-  #     - postgres
-  #   command: ["crond", "-f"]
-  #   networks:
-  #     - hubzilla
-  #   volumes:
-  #     - volweb:/var/www/html
+  
+  cron:
+    env_file: .env
+    depends_on:
+      - postgres
+    command: ["crond", "-f"]
+    networks:
+      - hubzilla
+    volumes:
+      - volweb:/var/www/html
