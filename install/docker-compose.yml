@@ -71,9 +71,6 @@ services:
       # - traefik.http.routers.redirect.entrypoints=web
 
   hubzilla:
-    build:
-      context: ../
-      dockerfile: Dockerfile
     depends_on:
       - postgres
     env_file: .env
@@ -102,9 +99,6 @@ services:
     networks:
       - hubzilla
   # cron:
-  #   build:
-  #     context: ../
-  #     dockerfile: Dockerfile
   #   env_file: .env
   #   depends_on:
   #     - postgres
